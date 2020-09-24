@@ -1,0 +1,14 @@
+name: sslscan
+version: 0.1.0
+
+authors:
+  - Sijawusz Pur Rahnama <sija@sija.pl>
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 0.13.2
+
+crystal: 0.35.1
+
+license: MIT
