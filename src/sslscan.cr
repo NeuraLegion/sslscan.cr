@@ -1,6 +1,6 @@
-# TODO: Write documentation for `SSLScan`
-module SSLScan
-  VERSION = "0.1.0"
+require "xml"
+require "./sslscan/*"
 
-  # TODO: Put your code here
+module SSLScan
+  extend self
 end

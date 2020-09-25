@@ -1,0 +1,28 @@
+module SSLScan
+  class Report
+    getter host : String
+    getter sni_name : String
+    getter port : Int32
+    getter protocols : Array(Protocol)
+    getter renegotiation : Renegotiation
+    getter heartbleed : Array(Heartbleed)
+    getter ciphers : Array(Cipher)
+    getter certificates : Array(Certificate)
+    getter groups : Array(Group)
+    getter connection_signature_algorithms : Array(ConnectionSignatureAlgorithm)
+
+    def initialize(
+      @host,
+      @sni_name,
+      @port,
+      @protocols,
+      @renegotiation,
+      @heartbleed,
+      @ciphers,
+      @certificates,
+      @groups,
+      @connection_signature_algorithms
+    )
+    end
+  end
+end
