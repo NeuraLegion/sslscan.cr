@@ -25,7 +25,7 @@ module SSLScan
       end
     end
 
-    getter type : Type
+    getter type : Type = :short
     getter signature_algorithm : String
     getter pk : PK
     getter subject : String
@@ -37,7 +37,6 @@ module SSLScan
     getter? expired : Bool
 
     def initialize(
-      @type : Type,
       @signature_algorithm,
       @pk,
       @subject,
