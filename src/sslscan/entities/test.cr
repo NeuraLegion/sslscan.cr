@@ -4,6 +4,7 @@ module SSLScan
     getter sni_name : String
     getter port : Int32
     getter protocols : Array(Protocol)
+    getter client_ciphers : Array(ClientCipher)
     getter renegotiation : Renegotiation
     getter heartbleed : Array(Heartbleed)
     getter ciphers : Array(Cipher)
@@ -16,6 +17,7 @@ module SSLScan
       @sni_name,
       @port,
       @protocols,
+      @client_ciphers,
       @renegotiation,
       @heartbleed,
       @ciphers,

@@ -67,6 +67,15 @@ module SSLScan
       end
     end
 
+    protected def build_client_ciphers(ssltest : XML::Node) : Array(ClientCipher)
+      map_children(ssltest, "client-cipher") do |node|
+        ClientCipher.new(
+          cipher: node["cipher"],
+          provider: node["provider"],
+        )
+      end
+    end
+
     protected def build_heartbleed(ssltest : XML::Node) : Array(Heartbleed)
       map_children(ssltest, "heartbleed") do |node|
         Heartbleed.new(
@@ -162,6 +171,7 @@ module SSLScan
     protected def build_test(ssltest : XML::Node) : Test
       renegotiation = build_renegotiation(ssltest)
       protocols = build_protocols(ssltest)
+      client_ciphers = build_client_ciphers(ssltest)
       heartbleed = build_heartbleed(ssltest)
       ciphers = build_ciphers(ssltest)
       certificates = build_certificates(ssltest)
@@ -173,6 +183,7 @@ module SSLScan
         sni_name: ssltest["sniname"],
         port: ssltest["port"].to_i,
         protocols: protocols,
+        client_ciphers: client_ciphers,
         renegotiation: renegotiation,
         heartbleed: heartbleed,
         ciphers: ciphers,
