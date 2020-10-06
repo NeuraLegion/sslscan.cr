@@ -15,12 +15,14 @@ module SSLScan
 
       getter? error : Bool
       getter type : Type
-      getter bits : Int32
+      getter curve_name : String?
+      getter bits : Int32?
 
       def initialize(
         @error,
         @type : Type,
-        @bits
+        @curve_name = nil,
+        @bits = nil
       )
       end
     end

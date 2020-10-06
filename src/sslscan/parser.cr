@@ -117,7 +117,8 @@ module SSLScan
         pk: Certificate::PK.new(
           error: pk["error"] == "true",
           type: Certificate::PK::Type.parse(pk["type"]),
-          bits: pk["bits"].to_i,
+          curve_name: pk["curve_name"]?,
+          bits: pk["bits"]?.try(&.to_i),
         ),
         subject: subject,
         alt_names: alt_names.split(/,\s*/),

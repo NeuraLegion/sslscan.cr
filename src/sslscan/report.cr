@@ -30,9 +30,9 @@ module SSLScan
         pk = certificate.pk
         case pk.type
         when .rsa?
-          issues << :weak_certificate if pk.bits < 2048
+          issues << :weak_certificate if pk.bits.try(&.<(2048))
         when .ec?
-          issues << :weak_certificate if pk.bits < 112
+          issues << :weak_certificate if pk.bits.try(&.<(112))
         end
       end
 
