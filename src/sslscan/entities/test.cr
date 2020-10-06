@@ -6,6 +6,7 @@ module SSLScan
     getter protocols : Array(Protocol)
     getter client_ciphers : Array(ClientCipher)
     getter renegotiation : Renegotiation
+    getter compression : Compression?
     getter heartbleed : Array(Heartbleed)
     getter ciphers : Array(Cipher)
     getter certificates : Array(Certificate)
@@ -19,6 +20,7 @@ module SSLScan
       @protocols,
       @client_ciphers,
       @renegotiation,
+      @compression,
       @heartbleed,
       @ciphers,
       @certificates,

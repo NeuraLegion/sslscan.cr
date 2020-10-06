@@ -50,6 +50,13 @@ module SSLScan
       )
     end
 
+    protected def build_compression?(ssltest : XML::Node) : Compression?
+      return unless node = find_child(ssltest, "compression")
+      Compression.new(
+        supported: node["supported"] == "1"
+      )
+    end
+
     @[AlwaysInline]
     protected def map_children(ssltest : XML::Node, name : String)
       find_children(ssltest, name).map do |node|
@@ -175,6 +182,7 @@ module SSLScan
 
     protected def build_test(ssltest : XML::Node) : Test
       renegotiation = build_renegotiation(ssltest)
+      compression = build_compression?(ssltest)
       protocols = build_protocols(ssltest)
       client_ciphers = build_client_ciphers(ssltest)
       heartbleed = build_heartbleed(ssltest)
@@ -190,6 +198,7 @@ module SSLScan
         protocols: protocols,
         client_ciphers: client_ciphers,
         renegotiation: renegotiation,
+        compression: compression,
         heartbleed: heartbleed,
         ciphers: ciphers,
         certificates: certificates,
