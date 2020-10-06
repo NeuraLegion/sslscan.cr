@@ -95,6 +95,7 @@ module SSLScan
           id: node["id"],
           strength: Cipher::Strength.parse(node["strength"]),
           curve: node["curve"]?,
+          dhe_bits: node["dhebits"]?.try(&.to_i),
           ecdhe_bits: node["ecdhebits"]?.try(&.to_i),
           time: node["time"]?.try(&.to_i.milliseconds),
         )

@@ -21,6 +21,7 @@ module SSLScan
     getter id : String
     getter strength : Strength
     getter curve : String?
+    getter dhe_bits : Int32?
     getter ecdhe_bits : Int32?
     getter time : Time::Span?
 
@@ -32,6 +33,7 @@ module SSLScan
       @id,
       @strength : Strength,
       @curve = nil,
+      @dhe_bits = nil,
       @ecdhe_bits = nil,
       @time = nil
     )
