@@ -14,7 +14,8 @@ module SSLScan
   end
 
   def detect(host : String, port : Int32? = nil) : Report
-    document = run_xml(host + (port && ":#{port}").to_s)
+    host = host + (port && ":#{port}").to_s
+    document = run_xml("--show-times", host)
     result = parse(document)
 
     case result

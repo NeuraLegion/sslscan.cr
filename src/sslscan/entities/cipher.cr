@@ -22,6 +22,7 @@ module SSLScan
     getter strength : Strength
     getter curve : String?
     getter ecdhe_bits : Int32?
+    getter time : Time::Span?
 
     def initialize(
       @status : Status,
@@ -31,7 +32,8 @@ module SSLScan
       @id,
       @strength : Strength,
       @curve = nil,
-      @ecdhe_bits = nil
+      @ecdhe_bits = nil,
+      @time = nil
     )
     end
   end
