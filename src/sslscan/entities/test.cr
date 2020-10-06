@@ -1,5 +1,5 @@
 module SSLScan
-  class Report
+  class Test
     getter host : String
     getter sni_name : String
     getter port : Int32
