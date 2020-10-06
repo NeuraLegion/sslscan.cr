@@ -27,12 +27,13 @@ module SSLScan
         issues << :self_signed_certificate if certificate.self_signed?
         issues << :expired_certificate if certificate.expired?
 
-        pk = certificate.pk
-        case pk.type
-        when .rsa?
-          issues << :weak_certificate if pk.bits.try(&.<(2048))
-        when .ec?
-          issues << :weak_certificate if pk.bits.try(&.<(112))
+        if pk = certificate.pk
+          case pk.type
+          when .rsa?
+            issues << :weak_certificate if pk.bits.try(&.<(2048))
+          when .ec?
+            issues << :weak_certificate if pk.bits.try(&.<(112))
+          end
         end
       end
 

@@ -29,7 +29,7 @@ module SSLScan
 
     getter type : Type = :short
     getter signature_algorithm : String
-    getter pk : PK
+    getter pk : PK?
     getter subject : String
     getter alt_names : Array(String)
     getter issuer : String

@@ -112,8 +112,17 @@ module SSLScan
       get_child(node, name).content
     end
 
+    protected def build_certificate_pk?(node : XML::Node) : Certificate::PK?
+      return unless pk = find_child(node, "pk")
+      Certificate::PK.new(
+        error: pk["error"] == "true",
+        type: Certificate::PK::Type.parse(pk["type"]? || "unknown"),
+        curve_name: pk["curve_name"]?,
+        bits: pk["bits"]?.try(&.to_i),
+      )
+    end
+
     protected def build_certificate(node : XML::Node) : Certificate
-      pk = get_child(node, "pk")
       signature_algorithm = get_child_content(node, "signature-algorithm")
       subject = get_child_content(node, "subject")
       alt_names = get_child_content(node, "altnames")
@@ -125,12 +134,7 @@ module SSLScan
 
       Certificate.new(
         signature_algorithm: signature_algorithm,
-        pk: Certificate::PK.new(
-          error: pk["error"] == "true",
-          type: Certificate::PK::Type.parse(pk["type"]),
-          curve_name: pk["curve_name"]?,
-          bits: pk["bits"]?.try(&.to_i),
-        ),
+        pk: build_certificate_pk?(node),
         subject: subject,
         alt_names: alt_names.split(/,\s*/),
         issuer: issuer,
