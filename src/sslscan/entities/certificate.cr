@@ -21,8 +21,8 @@ module SSLScan
       def initialize(
         @error,
         @type : Type,
-        @curve_name = nil,
-        @bits = nil
+        @curve_name,
+        @bits
       )
       end
     end

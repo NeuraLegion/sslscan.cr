@@ -32,10 +32,10 @@ module SSLScan
       @cipher,
       @id,
       @strength : Strength,
-      @curve = nil,
-      @dhe_bits = nil,
-      @ecdhe_bits = nil,
-      @time = nil
+      @curve,
+      @dhe_bits,
+      @ecdhe_bits,
+      @time
     )
     end
   end
