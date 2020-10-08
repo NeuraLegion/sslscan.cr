@@ -101,6 +101,7 @@ module SSLScan
       map_children(ssltest, "cipher") do |node|
         Cipher.new(
           status: Cipher::Status.parse(node["status"]),
+          http: node["http"]?.try(&.strip.presence),
           ssl_version: node["sslversion"],
           bits: node["bits"].to_i,
           cipher: node["cipher"],

@@ -15,6 +15,7 @@ module SSLScan
     end
 
     getter status : Status
+    getter http : String?
     getter ssl_version : String
     getter bits : Int32
     getter cipher : String
@@ -27,6 +28,7 @@ module SSLScan
 
     def initialize(
       @status : Status,
+      @http,
       @ssl_version,
       @bits,
       @cipher,
