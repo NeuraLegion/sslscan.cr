@@ -33,13 +33,18 @@ module SSLScan
     end
 
     @[AlwaysInline]
+    protected def find_children(node : XML::Node, name : String)
+      node.children.select(&.name.==(name))
+    end
+
+    @[AlwaysInline]
     protected def find_child(node : XML::Node, name : String)
       node.children.find(&.name.==(name))
     end
 
     @[AlwaysInline]
-    protected def find_children(node : XML::Node, name : String)
-      node.children.select(&.name.==(name))
+    protected def find_child_content(node : XML::Node, name : String) : String?
+      find_child(node, name).try(&.content)
     end
 
     protected def build_renegotiation(ssltest : XML::Node) : Renegotiation
@@ -130,11 +135,11 @@ module SSLScan
     end
 
     protected def build_certificate(node : XML::Node) : Certificate
-      signature_algorithm = get_child_content(node, "signature-algorithm")
-      subject = get_child_content(node, "subject")
-      alt_names = get_child_content(node, "altnames")
-      issuer = get_child_content(node, "issuer")
-      self_signed = get_child_content(node, "self-signed")
+      signature_algorithm = find_child_content(node, "signature-algorithm")
+      subject = find_child_content(node, "subject")
+      alt_names = find_child_content(node, "altnames")
+      issuer = find_child_content(node, "issuer")
+      self_signed = find_child_content(node, "self-signed")
       not_valid_before = get_child_content(node, "not-valid-before")
       not_valid_after = get_child_content(node, "not-valid-after")
       expired = get_child_content(node, "expired")
@@ -143,7 +148,7 @@ module SSLScan
         signature_algorithm: signature_algorithm,
         pk: build_certificate_pk?(node),
         subject: subject,
-        alt_names: alt_names.split(/,\s*/),
+        alt_names: alt_names.try(&.split(/,\s*/)),
         issuer: issuer,
         self_signed: self_signed == "true",
         not_valid_before: Time.parse_utc(not_valid_before, "%b %e %H:%M:%S %Y GMT"),

@@ -28,12 +28,12 @@ module SSLScan
     end
 
     getter type : Type = :short
-    getter signature_algorithm : String
+    getter signature_algorithm : String?
     getter pk : PK?
-    getter subject : String
-    getter alt_names : Array(String)
-    getter issuer : String
-    getter? self_signed : Bool
+    getter subject : String?
+    getter alt_names : Array(String)?
+    getter issuer : String?
+    getter? self_signed : Bool?
     getter not_valid_before : Time
     getter not_valid_after : Time
     getter? expired : Bool
