@@ -7,20 +7,22 @@ module SSLScan
   extend Parser
 
   def version : String
-    document = run_xml("--version")
+    document = run_xml(%w[--version])
     document =
       find_document(document)
     document["version"]
   end
 
   def detect(host : String, port : Int32? = nil, http = false, client_ciphers = false, times = false) : Report
-    host = host + (port && ":#{port}").to_s
-    document = run_xml(
-      (http && "--http").to_s,
-      (client_ciphers && "--show-ciphers").to_s,
-      (times && "--show-times").to_s,
-      host,
-    )
+    host += ":#{port}" if port
+
+    args = %w[]
+    args << "--http" if http
+    args << "--show-ciphers" if client_ciphers
+    args << "--show-times" if times
+    args << host
+
+    document = run_xml(args)
     result = parse(document)
 
     case result
@@ -29,7 +31,7 @@ module SSLScan
     end
   end
 
-  protected def run(*args) : String
+  protected def run(args : Array(String)) : String
     output = IO::Memory.new
     error = IO::Memory.new
 
@@ -41,8 +43,9 @@ module SSLScan
     output.to_s.chomp
   end
 
-  protected def run_xml(*args) : XML::Node
-    output = run("--xml=-", *args)
+  protected def run_xml(args : Array(String)) : XML::Node
+    args = %w[--xml=-].concat(args)
+    output = run(args)
     XML.parse(output)
   end
 end
