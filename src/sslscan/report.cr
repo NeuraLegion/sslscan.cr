@@ -1,5 +1,8 @@
 module SSLScan
   class Report
+    WEAK_CIPHERS =
+      {"RC4", "DES", "_SM4_", "_GOSTR341112_"}
+
     WEAK_SIGNATURE_ALGORITHMS = {
       "rsa_pkcs1_nohash",
       "dsa_nohash",
@@ -39,7 +42,7 @@ module SSLScan
         if cipher.strength.weak? || cipher.bits < 56
           issues << {:weak_cipher, name}
         end
-        if %w[RC4 DES _SM4_ _GOSTR341112_].any? { |v| name.upcase[v]? }
+        if WEAK_CIPHERS.any? { |v| name.upcase[v]? }
           issues << {:weak_cipher, name}
         end
       end
