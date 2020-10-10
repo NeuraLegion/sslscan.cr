@@ -3,6 +3,19 @@ module SSLScan
     WEAK_CIPHERS =
       {"RC4", "DES", "_SM4_", "_GOSTR341112_"}
 
+    WEAK_GROUPS = {
+      "sect163k1",
+      "sect163r1",
+      "sect163r2",
+      "sect193r1",
+      "sect193r2",
+      "secp160k1",
+      "secp160r1",
+      "secp160r2",
+      "secp192k1",
+      "secp192r1",
+    }
+
     WEAK_SIGNATURE_ALGORITHMS = {
       "rsa_pkcs1_nohash",
       "dsa_nohash",
@@ -80,7 +93,9 @@ module SSLScan
       end
 
       test.groups.each do |group|
-        issues << {:weak_group, group.name} if group.bits < 128
+        name = group.name
+        issues << {:weak_group, name} if group.bits < 128
+        issues << {:weak_group, name} if WEAK_GROUPS.any? { |v| name.downcase[v]? }
       end
 
       test.connection_signature_algorithms.each do |csa|
