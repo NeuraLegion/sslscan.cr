@@ -1,14 +1,11 @@
 module SSLScan
   class Report
-    getter test : Test
 
-    def initialize(@test)
-    end
+    getter test : Test
+    getter issues = [] of {Symbol, String?}
 
     # ameba:disable Metrics/CyclomaticComplexity
-    def issues
-      issues = Set(Tuple(Symbol, String?)).new
-
+    def initialize(@test)
       if test.renegotiation.supported? && !test.renegotiation.secure?
         issues << {:unsecure_renegotiation, nil}
       end
@@ -79,7 +76,7 @@ module SSLScan
         end
       end
 
-      issues
+      issues.uniq!
     end
   end
 end
