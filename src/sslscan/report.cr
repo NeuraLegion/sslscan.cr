@@ -5,6 +5,7 @@ module SSLScan
     def initialize(@test)
     end
 
+    # ameba:disable Metrics/CyclomaticComplexity
     def issues
       issues = Set(Symbol | Tuple(Symbol, String)).new
 
@@ -56,13 +57,14 @@ module SSLScan
         issues << :self_signed_certificate if certificate.self_signed?
         issues << :expired_certificate if certificate.expired?
 
-        if pk = certificate.pk
-          case pk.type
-          when .rsa?
-            issues << :weak_certificate if pk.bits.try(&.<(2048))
-          when .ec?
-            issues << :weak_certificate if pk.bits.try(&.<(112))
-          end
+        next unless pk = certificate.pk
+        next unless bits = pk.bits
+
+        case pk.type
+        when .rsa?
+          issues << :weak_certificate if bits < 2048
+        when .ec?
+          issues << :weak_certificate if bits < 112
         end
       end
 
