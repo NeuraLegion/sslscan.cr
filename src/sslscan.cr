@@ -1,10 +1,13 @@
 require "xml"
+require "log"
 require "./sslscan/entities/*"
 require "./sslscan/*"
 
 module SSLScan
   extend self
   extend Parser
+
+  Log = ::Log.for(self)
 
   def version : String
     document = run_xml(%w[--version])
@@ -32,11 +35,22 @@ module SSLScan
   end
 
   protected def run(args : Array(String)) : String
+    Log.debug &.emit("Running sslscan", {args: args})
+
     output = IO::Memory.new
     error = IO::Memory.new
 
+    start_time = Time.monotonic
     status =
       Process.run("sslscan", args, output: output, error: error)
+    elapsed = Time.monotonic - start_time
+
+    Log.debug &.emit("Finished running sslscan", {
+      elapsed: elapsed.to_s,
+      status:  status.exit_status,
+      stdout:  output.to_s.presence,
+      stderr:  error.to_s.presence,
+    })
 
     raise error.to_s.chomp unless status.success?
 
