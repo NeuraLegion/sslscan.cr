@@ -75,7 +75,7 @@ module SSLScan
         when .rsa?
           issues << {:weak_certificate, certificate.subject} if bits < 2048
         when .ec?
-          issues << {:weak_certificate, certificate.subject} if bits < 112
+          issues << {:weak_certificate, certificate.subject} if bits < 128
         end
       end
 
