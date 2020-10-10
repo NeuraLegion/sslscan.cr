@@ -72,7 +72,7 @@ module SSLScan
             issues << {:weak_protocol, "TLSv" + version}
           end
           if version.in?("1.3") && !protocol.enabled?
-            issues << {:missing_protocol, "TLSv" + version}
+            issues << {:unsupported_protocol, "TLSv" + version}
           end
         end
       end
