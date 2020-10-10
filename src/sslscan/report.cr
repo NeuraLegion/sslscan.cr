@@ -7,14 +7,14 @@ module SSLScan
 
     # ameba:disable Metrics/CyclomaticComplexity
     def issues
-      issues = Set(Symbol | Tuple(Symbol, String)).new
+      issues = Set(Tuple(Symbol, String?)).new
 
       if test.renegotiation.supported? && !test.renegotiation.secure?
-        issues << :unsecure_renegotiation
+        issues << {:unsecure_renegotiation, nil}
       end
 
       if test.compression.try(&.supported?)
-        issues << :compression_enabled
+        issues << {:compression_enabled, nil}
       end
 
       test.heartbleed.each do |heartbleed|
@@ -54,17 +54,17 @@ module SSLScan
       end
 
       test.certificates.each do |certificate|
-        issues << :self_signed_certificate if certificate.self_signed?
-        issues << :expired_certificate if certificate.expired?
+        issues << {:self_signed_certificate, certificate.subject} if certificate.self_signed?
+        issues << {:expired_certificate, certificate.subject} if certificate.expired?
 
         next unless pk = certificate.pk
         next unless bits = pk.bits
 
         case pk.type
         when .rsa?
-          issues << :weak_certificate if bits < 2048
+          issues << {:weak_certificate, certificate.subject} if bits < 2048
         when .ec?
-          issues << :weak_certificate if bits < 112
+          issues << {:weak_certificate, certificate.subject} if bits < 112
         end
       end
 
