@@ -1,5 +1,16 @@
 module SSLScan
   class Report
+    WEAK_SIGNATURE_ALGORITHMS = {
+      "rsa_pkcs1_nohash",
+      "dsa_nohash",
+      "ecdsa_nohash",
+      "rsa_pkcs1_sha224",
+      "dsa_sha224",
+      "ecdsa_sha224",
+      "dsa_sha256",
+      "dsa_sha384",
+      "dsa_sha512",
+    }
 
     getter test : Test
     getter issues = [] of {Symbol, String?}
@@ -72,6 +83,9 @@ module SSLScan
       test.connection_signature_algorithms.each do |csa|
         name = csa.name
         if %w[md5 sha1 any].any? { |v| name.downcase[v]? }
+          issues << {:weak_connection_signature_algorithm, name}
+        end
+        if name.downcase.in?(WEAK_SIGNATURE_ALGORITHMS)
           issues << {:weak_connection_signature_algorithm, name}
         end
       end
