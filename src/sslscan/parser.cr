@@ -33,18 +33,35 @@ module SSLScan
     end
 
     @[AlwaysInline]
-    protected def find_children(node : XML::Node, name : String)
+    protected def find_children(node : XML::Node, name : String) : Array(XML::Node)
       node.children.select(&.name.==(name))
     end
 
     @[AlwaysInline]
-    protected def find_child(node : XML::Node, name : String)
+    protected def map_children(ssltest : XML::Node, name : String, &)
+      find_children(ssltest, name).map do |node|
+        yield node
+      end
+    end
+
+    @[AlwaysInline]
+    protected def find_child(node : XML::Node, name : String) : XML::Node?
       node.children.find(&.name.==(name))
     end
 
     @[AlwaysInline]
     protected def find_child_content(node : XML::Node, name : String) : String?
       find_child(node, name).try(&.content)
+    end
+
+    @[AlwaysInline]
+    protected def get_child(node : XML::Node, name : String) : XML::Node
+      find_child(node, name).not_nil!
+    end
+
+    @[AlwaysInline]
+    protected def get_child_content(node : XML::Node, name : String) : String
+      get_child(node, name).content
     end
 
     protected def build_renegotiation(ssltest : XML::Node) : Renegotiation
@@ -60,13 +77,6 @@ module SSLScan
       Compression.new(
         supported: node["supported"] == "1"
       )
-    end
-
-    @[AlwaysInline]
-    protected def map_children(ssltest : XML::Node, name : String)
-      find_children(ssltest, name).map do |node|
-        yield node
-      end
     end
 
     protected def build_protocols(ssltest : XML::Node) : Array(Protocol)
@@ -113,16 +123,6 @@ module SSLScan
           time: node["time"]?.try(&.to_i.milliseconds),
         )
       end
-    end
-
-    @[AlwaysInline]
-    protected def get_child(node : XML::Node, name : String) : XML::Node
-      find_child(node, name).not_nil!
-    end
-
-    @[AlwaysInline]
-    protected def get_child_content(node : XML::Node, name : String) : String
-      get_child(node, name).content
     end
 
     protected def build_certificate_pk?(node : XML::Node) : Certificate::PK?
