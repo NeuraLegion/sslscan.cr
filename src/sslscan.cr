@@ -13,12 +13,12 @@ module SSLScan
     document["version"]
   end
 
-  def detect(host : String, port : Int32? = nil) : Report
+  def detect(host : String, port : Int32? = nil, http = false, client_ciphers = false, times = false) : Report
     host = host + (port && ":#{port}").to_s
     document = run_xml(
-      "--http",
-      "--show-ciphers",
-      "--show-times",
+      (http && "--http").to_s,
+      (client_ciphers && "--show-ciphers").to_s,
+      (times && "--show-times").to_s,
       host,
     )
     result = parse(document)
