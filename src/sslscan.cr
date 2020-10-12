@@ -16,11 +16,10 @@ module SSLScan
     document["version"]
   end
 
-  def detect(host : String, port : Int32? = nil, http = false, client_ciphers = false, times = false) : Report
+  def detect(host : String, port : Int32? = nil, client_ciphers = false, times = false) : Report
     host += ":#{port}" if port
 
     args = %w[]
-    args << "--http" if http
     args << "--show-ciphers" if client_ciphers
     args << "--show-times" if times
     args << host
