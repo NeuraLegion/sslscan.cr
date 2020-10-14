@@ -20,7 +20,5 @@ module SSLScan
 
     def initialize(@type : Type, @context = nil)
     end
-
-    def_equals @type, @context
   end
 end
