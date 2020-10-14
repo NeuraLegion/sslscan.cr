@@ -42,23 +42,33 @@ module SSLScan
     getter test : Test
     getter issues = [] of Issue
 
-    protected def add_issue(type : Issue::Type, context : String? = nil)
-      issues << Issue.new(type, context)
+    protected def add_issue(severity : Issue::Severity, type : String, context : String? = nil)
+      issues << Issue.new(severity, type, context)
     end
 
     # ameba:disable Metrics/CyclomaticComplexity
     def initialize(@test)
-      if test.renegotiation.supported? && !test.renegotiation.secure?
-        add_issue :unsecure_renegotiation
+      if test.renegotiation.supported?
+        if test.renegotiation.secure?
+          add_issue :low, "renegotiation.secure"
+        else
+          add_issue :high, "renegotiation.unsecure"
+        end
       end
 
-      if test.compression.try(&.supported?)
-        add_issue :compression_enabled
+      if compression = test.compression
+        if compression.supported?
+          add_issue :high, "compression.enabled"
+        else
+          add_issue :low, "compression.disabled"
+        end
       end
 
       test.heartbleed.each do |heartbleed|
         if heartbleed.vulnerable?
-          add_issue :heartbleed, heartbleed.ssl_version
+          add_issue :high, "heartbleed.vulnerable", heartbleed.ssl_version
+        else
+          add_issue :low, "heartbleed.invulnerable", heartbleed.ssl_version
         end
       end
 
@@ -66,56 +76,64 @@ module SSLScan
         name = cipher.cipher
 
         if cipher.strength.null?
-          add_issue :null_cipher, name
+          add_issue :high, "cipher.null", name
         end
         if cipher.strength.weak? || cipher.bits < 56
-          add_issue :weak_cipher, name
+          add_issue :high, "cipher.weak", name
         end
         if WEAK_CIPHERS.any? { |v| name.upcase[v]? }
-          add_issue :weak_cipher, name
+          add_issue :high, "cipher.weak", name
         end
       end
 
       test.protocols.each do |protocol|
         version = "#{protocol.type.to_s.upcase}v#{protocol.version}"
 
-        if version.in?(WEAK_PROTOCOLS) && protocol.enabled?
-          add_issue :weak_protocol, version
-        end
-        if version.in?(STRONG_PROTOCOLS) && !protocol.enabled?
-          add_issue :unsupported_protocol, version
+        case version
+        when .in?(WEAK_PROTOCOLS)
+          if protocol.enabled?
+            add_issue :high, "protocol.enabled", version
+          else
+            add_issue :low, "protocol.disabled", version
+          end
+        when .in?(STRONG_PROTOCOLS)
+          if protocol.enabled?
+            add_issue :low, "protocol.enabled", version
+          else
+            add_issue :high, "protocol.disabled", version
+          end
         end
       end
 
       test.certificates.each do |certificate|
         subject = certificate.subject
 
-        add_issue :self_signed_certificate, subject if certificate.self_signed?
-        add_issue :expired_certificate, subject if certificate.expired?
+        add_issue :high, "certificate.self_signed", subject if certificate.self_signed?
+        add_issue :high, "certificate.expired", subject if certificate.expired?
 
         next unless pk = certificate.pk
         next unless bits = pk.bits
 
         case pk.type
         when .rsa?
-          add_issue :weak_certificate, subject if bits < 2048
+          add_issue :high, "certificate.weak", subject if bits < 2048
         when .ec?
-          add_issue :weak_certificate, subject if bits < 128
+          add_issue :high, "certificate.weak", subject if bits < 128
         end
       end
 
       test.groups.each do |group|
         name = group.name
 
-        add_issue :weak_group, name if group.bits < 128
-        add_issue :weak_group, name if WEAK_GROUPS.any? { |v| name.downcase[v]? }
+        add_issue :high, "group.weak", name if group.bits < 128
+        add_issue :high, "group.weak", name if WEAK_GROUPS.any? { |v| name.downcase[v]? }
       end
 
       test.connection_signature_algorithms.each do |csa|
         name = csa.name
 
         if WEAK_SIGNATURE_ALGORITHMS.any? { |v| name.downcase[v]? }
-          add_issue :weak_connection_signature_algorithm, name
+          add_issue :high, "connection_signature_algorithm.weak", name
         end
       end
 

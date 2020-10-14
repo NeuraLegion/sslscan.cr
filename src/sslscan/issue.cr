@@ -1,24 +1,16 @@
 module SSLScan
   struct Issue
-    enum Type
-      UnsecureRenegotiation
-      CompressionEnabled
-      Heartbleed
-      NullCipher
-      WeakCipher
-      WeakProtocol
-      UnsupportedProtocol
-      SelfSignedCertificate
-      ExpiredCertificate
-      WeakCertificate
-      WeakGroup
-      WeakConnectionSignatureAlgorithm
+    enum Severity
+      Low
+      Medium
+      High
     end
 
-    getter type : Type
+    getter severity : Severity
+    getter type : String
     getter context : String?
 
-    def initialize(@type : Type, @context = nil)
+    def initialize(@severity : Severity, @type, @context = nil)
     end
   end
 end
