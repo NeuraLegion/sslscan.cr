@@ -19,7 +19,7 @@ module SSLScan
   def detect(host : String, port : Int32? = nil, client_ciphers = false, times = false) : Report
     host += ":#{port}" if port
 
-    args = %w[]
+    args = %w[--no-colour]
     args << "--show-ciphers" if client_ciphers
     args << "--show-times" if times
     args << host
