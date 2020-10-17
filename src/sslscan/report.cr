@@ -108,7 +108,7 @@ module SSLScan
 
     protected def add_issues(protocols : Array(Protocol))
       protocols.each do |protocol|
-        version = "#{protocol.type.to_s.upcase}v#{protocol.version}"
+        version = protocol.version_verbose
 
         case version
         when .in?(WEAK_PROTOCOLS)

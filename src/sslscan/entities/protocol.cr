@@ -15,5 +15,9 @@ module SSLScan
       @enabled
     )
     end
+
+    def version_verbose : String
+      "#{type}v#{version}"
+    end
   end
 end
