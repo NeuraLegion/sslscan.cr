@@ -76,13 +76,13 @@ module SSLScan
         name = cipher.cipher
 
         if cipher.strength.null?
-          add_issue :high, "cipher.null", name
+          add_issue :high, "cipher.strength.null", name
         end
         if cipher.strength.weak? || cipher.bits < 56
-          add_issue :high, "cipher.weak", name
+          add_issue :high, "cipher.strength.weak", name
         end
         if WEAK_CIPHERS.any? { |v| name.upcase[v]? }
-          add_issue :high, "cipher.weak", name
+          add_issue :high, "cipher.strength.weak", name
         end
       end
 
@@ -116,24 +116,24 @@ module SSLScan
 
         case pk.type
         when .rsa?
-          add_issue :high, "certificate.weak", subject if bits < 2048
+          add_issue :high, "certificate.strength.weak", subject if bits < 2048
         when .ec?
-          add_issue :high, "certificate.weak", subject if bits < 128
+          add_issue :high, "certificate.strength.weak", subject if bits < 128
         end
       end
 
       test.groups.each do |group|
         name = group.name
 
-        add_issue :high, "group.weak", name if group.bits < 128
-        add_issue :high, "group.weak", name if WEAK_GROUPS.any? { |v| name.downcase[v]? }
+        add_issue :high, "group.strength.weak", name if group.bits < 128
+        add_issue :high, "group.strength.weak", name if WEAK_GROUPS.any? { |v| name.downcase[v]? }
       end
 
       test.connection_signature_algorithms.each do |csa|
         name = csa.name
 
         if WEAK_SIGNATURE_ALGORITHMS.any? { |v| name.downcase[v]? }
-          add_issue :high, "connection_signature_algorithm.weak", name
+          add_issue :high, "connection_signature_algorithm.strength.weak", name
         end
       end
 
