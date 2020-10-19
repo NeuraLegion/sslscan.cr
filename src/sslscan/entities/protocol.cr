@@ -1,5 +1,7 @@
 module SSLScan
   struct Protocol
+    include Entity
+
     enum Type
       SSL
       TLS
@@ -18,6 +20,10 @@ module SSLScan
 
     def version_verbose : String
       "#{type}v#{version}"
+    end
+
+    def issue_context : String?
+      version_verbose
     end
   end
 end

@@ -1,5 +1,6 @@
 require "xml"
 require "log"
+require "./sslscan/entity"
 require "./sslscan/entities/*"
 require "./sslscan/*"
 

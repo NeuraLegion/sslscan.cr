@@ -1,5 +1,7 @@
 module SSLScan
   class Cipher
+    include Entity
+
     enum Status
       Accepted
       Preferred
@@ -37,6 +39,10 @@ module SSLScan
       @ecdhe_bits,
       @time
     )
+    end
+
+    def issue_context : String?
+      cipher
     end
   end
 end

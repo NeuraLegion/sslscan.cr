@@ -1,5 +1,7 @@
 module SSLScan
   class Certificate
+    include Entity
+
     enum Type
       Short
       Full
@@ -49,6 +51,10 @@ module SSLScan
       @not_valid_after,
       @expired
     )
+    end
+
+    def issue_context : String?
+      subject
     end
   end
 end
