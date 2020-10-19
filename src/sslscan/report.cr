@@ -1,43 +1,63 @@
 module SSLScan
   class Report
-    STRONG_PROTOCOLS =
-      {"TLSv1.3"}
+    # NOTE: Upper-cased partial matches
+    CIPHER_LEVELS = {
+      "EXP"           => :weak,
+      "RC4"           => :medium,
+      "DES"           => :medium, # Compromised by the American NSA
+      "_SM4_"         => :medium, # Developed by Chinese government
+      "_GOSTR341112_" => :medium, # Developed by Russian government
+      "CHACHA20"      => :strong,
+      "GCM"           => :strong,
+    } of String => Entity::Strength
 
-    WEAK_PROTOCOLS =
-      {"SSLv2", "SSLv3", "TLSv1.0"}
+    # NOTE: Exact matches
+    PROTOCOL_LEVELS = {
+      "SSLv2"   => :weak,
+      "SSLv3"   => :weak,
+      "TLSv1.0" => :medium,
+      "TLSv1.3" => :strong,
+    } of String => Entity::Strength
 
-    WEAK_CIPHERS = {
-      "RC4",
-      "DES",           # Compromised by the American NSA
-      "_SM4_",         # Developed by Chinese government
-      "_GOSTR341112_", # Developed by Russian government
-    }
+    # NOTE: Lower-cased partial matches
+    GROUP_LEVELS = {
+      "sect163k1" => :weak,
+      "sect163r1" => :weak,
+      "sect163r2" => :weak,
+      "sect193r1" => :weak,
+      "sect193r2" => :weak,
+      "secp160r1" => :weak,
+      "secp160r2" => :weak,
+      "secp192k1" => :weak,
+      "secp192r1" => :weak,
+      "secp256k1" => :strong,
+      "x25519"    => :strong,
+      "x448"      => :strong,
+    } of String => Entity::Strength
 
-    WEAK_GROUPS = {
-      "sect163k1",
-      "sect163r1",
-      "sect163r2",
-      "sect193r1",
-      "sect193r2",
-      "secp160k1",
-      "secp160r1",
-      "secp160r2",
-      "secp192k1",
-      "secp192r1",
-    }
-
-    WEAK_SIGNATURE_ALGORITHMS = {
-      "md5", "sha1", "any",
-      "rsa_pkcs1_nohash",
-      "dsa_nohash",
-      "ecdsa_nohash",
-      "rsa_pkcs1_sha224",
-      "dsa_sha224",
-      "ecdsa_sha224",
-      "dsa_sha256",
-      "dsa_sha384",
-      "dsa_sha512",
-    }
+    # NOTE: Lower-cased partial matches
+    SIGNATURE_ALGORITHM_LEVELS = {
+      "any"              => :weak,
+      "md5"              => :weak,
+      "sha1"             => :weak,
+      "rsa_pkcs1_nohash" => :weak,
+      "dsa_nohash"       => :weak,
+      "ecdsa_nohash"     => :weak,
+      "rsa_pkcs1_md5"    => :weak,
+      "dsa_md5"          => :weak,
+      "ecdsa_md5"        => :weak,
+      "rsa_pkcs1_sha1"   => :weak,
+      "dsa_sha1"         => :weak,
+      "ecdsa_sha1"       => :weak,
+      "dsa_sha224"       => :weak,
+      "dsa_sha256"       => :weak,
+      "dsa_sha384"       => :weak,
+      "dsa_sha512"       => :weak,
+      "rsa_pkcs1_sha224" => :medium,
+      "ecdsa_sha224"     => :medium,
+      "ed25519"          => :strong,
+      "ed448"            => :strong,
+    } of String => Entity::Strength
 
     getter test : Test
     getter issues = [] of Issue
@@ -55,12 +75,27 @@ module SSLScan
       issues.uniq!
     end
 
+    protected def entity_strength_to_issue_severity(strength : Entity::Strength) : Issue::Severity
+      case strength
+      in .weak?   then Issue::Severity::High
+      in .medium? then Issue::Severity::Medium
+      in .strong? then Issue::Severity::Low
+      end
+    end
+
     protected def add_issue(severity : Issue::Severity, type : String, context : String? = nil)
       issues << Issue.new(severity, type, context)
     end
 
     protected def add_issue(severity : Issue::Severity, entity : Entity, type : String | Symbol)
       add_issue(severity, "#{entity.issue_namespace}.#{type}", entity.issue_context)
+    end
+
+    protected def add_issue(entity : Entity, strength : Entity::Strength)
+      add_issue \
+        entity_strength_to_issue_severity(strength),
+        entity,
+        "strength.#{strength.to_s.downcase}"
     end
 
     protected def add_issues(entity : Nil)
@@ -96,30 +131,35 @@ module SSLScan
 
     protected def add_issues(ciphers : Array(Cipher))
       ciphers.each do |cipher|
-        name = cipher.cipher.upcase
+        add_issue cipher, :weak if cipher.bits < 56
 
-        if cipher.strength.null?
-          add_issue :high, cipher, "strength.null"
+        case cipher.strength
+        when .null?   then add_issue cipher, :weak
+        when .weak?   then add_issue cipher, :weak
+        when .medium? then add_issue cipher, :medium
+        when .strong? then add_issue cipher, :strong
         end
-        if cipher.strength.weak? || cipher.bits < 56
-          add_issue :high, cipher, "strength.weak"
-        end
-        if WEAK_CIPHERS.any? { |v| name[v]? }
-          add_issue :high, cipher, "strength.weak"
+        CIPHER_LEVELS.find(&.first[cipher.cipher.upcase]?).try do |_, strength|
+          add_issue cipher, strength
         end
       end
     end
 
     protected def add_issues(protocols : Array(Protocol))
       protocols.each do |protocol|
-        case protocol.version_verbose
-        when .in?(WEAK_PROTOCOLS)
+        next unless strength = PROTOCOL_LEVELS[protocol.version_verbose]?
+        case strength
+        in .weak?
           if protocol.enabled?
             add_issue :high, protocol, :enabled
           else
             add_issue :low, protocol, :disabled
           end
-        when .in?(STRONG_PROTOCOLS)
+        in .medium?
+          if protocol.enabled?
+            add_issue :medium, protocol, :enabled
+          end
+        in .strong?
           if protocol.enabled?
             add_issue :low, protocol, :enabled
           else
@@ -137,9 +177,9 @@ module SSLScan
         if (pk = certificate.pk) && (bits = pk.bits)
           case pk.type
           when .rsa?
-            add_issue :high, certificate, "strength.weak" if bits < 2048
+            add_issue certificate, :weak if bits < 2048
           when .ec?
-            add_issue :high, certificate, "strength.weak" if bits < 128
+            add_issue certificate, :weak if bits < 128
           end
         end
       end
@@ -147,10 +187,11 @@ module SSLScan
 
     protected def add_issues(groups : Array(Group))
       groups.each do |group|
-        name = group.name.downcase
+        add_issue group, :weak if group.bits < 128
 
-        add_issue :high, group, "strength.weak" if group.bits < 128
-        add_issue :high, group, "strength.weak" if WEAK_GROUPS.any? { |v| name[v]? }
+        GROUP_LEVELS.find(&.first[group.name.downcase]?).try do |_, strength|
+          add_issue group, strength
+        end
       end
     end
 
@@ -158,8 +199,8 @@ module SSLScan
       connection_signature_algorithms.each do |connection_signature_algorithm|
         name = connection_signature_algorithm.name.downcase
 
-        if WEAK_SIGNATURE_ALGORITHMS.any? { |v| name[v]? }
-          add_issue :high, connection_signature_algorithm, "strength.weak"
+        SIGNATURE_ALGORITHM_LEVELS.find(&.first[name]?).try do |_, strength|
+          add_issue connection_signature_algorithm, strength
         end
       end
     end

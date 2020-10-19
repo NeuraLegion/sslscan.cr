@@ -1,5 +1,11 @@
 module SSLScan
   module Entity
+    enum Strength
+      Weak
+      Medium
+      Strong
+    end
+
     macro included
       def issue_namespace : String
         {{
