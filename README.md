@@ -20,12 +20,17 @@ Crystal shard wrapping [sslscan](https://github.com/rbsec/sslscan) (v2) utility.
 require "sslscan"
 
 report = SSLScan.scan "github.com" # => #<SSLScan::Report ...>
+
+# Browse the already aggregated issues
 report.issues.each do |issue|
   issue.severity # SSLScan::Issue::Severity
   issue.type     # String
   issue.context  # String
 end
 report.issues.select(&.severity.high?) # => Set{...}
+
+# Or access the test results directly for further inspection
+report.test # => #<SSLScan::Test ...>
 ```
 
 ## Contributing
