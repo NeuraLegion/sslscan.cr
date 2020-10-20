@@ -5,6 +5,9 @@ authors:
   - Sijawusz Pur Rahnama <sija@sija.pl>
 
 development_dependencies:
+  spectator:
+    gitlab: arctic-fox/spectator
+    version: ~> 0.9.23
   ameba:
     github: crystal-ameba/ameba
     version: ~> 0.13.2
