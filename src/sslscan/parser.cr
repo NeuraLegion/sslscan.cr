@@ -28,10 +28,8 @@ module SSLScan
         return
       end
       case child.name
-      when "ssltest"
-        build_test(child)
-      when "error"
-        Error.new(child.content)
+      when "ssltest" then build_test(child)
+      when "error"   then build_error(child)
       end
     end
 
@@ -229,6 +227,10 @@ module SSLScan
         groups: groups,
         connection_signature_algorithms: csas,
       )
+    end
+
+    protected def build_error(node : XML::Node) : Error
+      Error.new(node.content)
     end
   end
 end

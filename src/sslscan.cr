@@ -50,7 +50,8 @@ module SSLScan
 
   protected def run_xml(args : Array(String)) : XML::Node
     args = %w[--xml=-].concat(args)
-    output = run(args)
+    output =
+      run(args)
     XML.parse(output)
   end
 end
