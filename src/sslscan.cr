@@ -35,14 +35,20 @@ module SSLScan
   end
 
   protected def run(args : Array(String)) : String
-    Log.debug &.emit("Running sslscan", {args: args})
+    command = Process.find_executable("sslscan")
+    raise "Cannot find 'sslscan' executable" unless command
+
+    Log.debug &.emit("Running sslscan", {
+      command: command,
+      args:    args,
+    })
 
     output = IO::Memory.new
     error = IO::Memory.new
 
     start_time = Time.monotonic
     status =
-      Process.run("sslscan", args, output: output, error: error)
+      Process.run(command, args, output: output, error: error)
     elapsed = Time.monotonic - start_time
 
     Log.debug &.emit("Finished running sslscan", {
