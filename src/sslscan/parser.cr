@@ -9,21 +9,17 @@ module SSLScan
     protected def parse?(node : XML::Node) : Test | Error?
       unless document = find_document?(node)
         Log.error {
-          <<-MSG
-            Was looking for the "document" element, but found \
-            #{node.first_element_child.try(&.name.inspect) || "nothing"} \
-            instead
-            MSG
+          node_name = node.first_element_child.try(&.name.inspect)
+          %(Was looking for the "document" element, \
+          but found #{node_name || "nothing"} instead)
         }
         return
       end
       unless child = find_main_node?(document)
         Log.error {
-          <<-MSG
-            Was looking for the "ssltest" or "error" elements, but found \
-            #{document.first_element_child.try(&.name.inspect) || "nothing"} \
-            instead
-            MSG
+          node_name = document.first_element_child.try(&.name.inspect)
+          %(Was looking for the "ssltest" or "error" elements, \
+          but found #{node_name || "nothing"} instead)
         }
         return
       end
