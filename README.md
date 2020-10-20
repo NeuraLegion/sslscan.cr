@@ -18,9 +18,14 @@ Crystal shard wrapping [sslscan](https://github.com/rbsec/sslscan) (v2) utility.
 
 ```crystal
 require "sslscan"
-```
 
-TODO: Write usage instructions here
+report = SSLScan.detect "nexploit.app" # => #<SSLScan::Report ...>
+report.issues.each do |issue|
+  issue.severity # => Issue::Severity::Medium
+  issue.type     # => "protocol.enabled"
+  issue.context  # => "TLSv1.0"
+end
+```
 
 ## Contributing
 
