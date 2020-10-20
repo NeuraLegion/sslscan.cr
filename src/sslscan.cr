@@ -6,7 +6,9 @@ require "./sslscan/*"
 
 module SSLScan
   extend self
+
   extend Parser
+  extend Scanner
 
   Log = ::Log.for(self)
 
@@ -15,23 +17,6 @@ module SSLScan
     document =
       find_document(document)
     document["version"]
-  end
-
-  def detect(host : String, port : Int32? = nil, client_ciphers = false, times = false) : Report
-    host += ":#{port}" if port
-
-    args = %w[--no-colour]
-    args << "--show-ciphers" if client_ciphers
-    args << "--show-times" if times
-    args << host
-
-    document = run_xml(args)
-    result = parse(document)
-
-    case result
-    in Test  then Report.new(result)
-    in Error then raise result
-    end
   end
 
   protected def run(args : Array(String)) : String
