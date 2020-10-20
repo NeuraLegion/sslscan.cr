@@ -60,7 +60,7 @@ module SSLScan
     } of String => Entity::Strength
 
     getter test : Test
-    getter issues = [] of Issue
+    getter issues = Set(Issue).new
 
     def initialize(@test)
       add_issues(test.renegotiation)
@@ -71,8 +71,6 @@ module SSLScan
       add_issues(test.certificates)
       add_issues(test.groups)
       add_issues(test.connection_signature_algorithms)
-
-      issues.uniq!
     end
 
     protected def entity_strength_to_issue_severity(strength : Entity::Strength) : Issue::Severity
