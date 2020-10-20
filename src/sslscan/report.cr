@@ -141,7 +141,9 @@ module SSLScan
         when .medium? then add_issue cipher, :medium
         when .strong? then add_issue cipher, :strong
         end
-        CIPHER_LEVELS.find(&.first[cipher.cipher.upcase]?).try do |_, strength|
+
+        name = cipher.cipher.upcase
+        CIPHER_LEVELS.find { |key, _| name[key]? }.try do |_, strength|
           add_issue cipher, strength
         end
       end
@@ -191,7 +193,8 @@ module SSLScan
       groups.each do |group|
         add_issue group, :weak if group.bits < 128
 
-        GROUP_LEVELS.find(&.first[group.name.downcase]?).try do |_, strength|
+        name = group.name.downcase
+        GROUP_LEVELS.find { |key, _| name[key]? }.try do |_, strength|
           add_issue group, strength
         end
       end
@@ -200,8 +203,7 @@ module SSLScan
     protected def add_issues(connection_signature_algorithms : Array(ConnectionSignatureAlgorithm))
       connection_signature_algorithms.each do |connection_signature_algorithm|
         name = connection_signature_algorithm.name.downcase
-
-        SIGNATURE_ALGORITHM_LEVELS.find(&.first[name]?).try do |_, strength|
+        SIGNATURE_ALGORITHM_LEVELS.find { |key, _| name[key]? }.try do |_, strength|
           add_issue connection_signature_algorithm, strength
         end
       end
