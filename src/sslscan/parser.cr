@@ -1,13 +1,32 @@
 module SSLScan
   module Parser
+    Log = ::Log.for(self)
+
     protected def parse(node : XML::Node) : Test | Error
       parse?(node) || raise "Couldn't parse the document"
     end
 
     protected def parse?(node : XML::Node) : Test | Error?
-      return unless document = find_document?(node)
-      return unless child = find_main_node?(document)
-
+      unless document = find_document?(node)
+        Log.error {
+          <<-MSG
+            Was looking for the "document" element, but found \
+            #{node.first_element_child.try(&.name.inspect) || "nothing"} \
+            instead
+            MSG
+        }
+        return
+      end
+      unless child = find_main_node?(document)
+        Log.error {
+          <<-MSG
+            Was looking for the "ssltest" or "error" elements, but found \
+            #{document.first_element_child.try(&.name.inspect) || "nothing"} \
+            instead
+            MSG
+        }
+        return
+      end
       case child.name
       when "ssltest"
         build_test(child)

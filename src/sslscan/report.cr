@@ -1,5 +1,7 @@
 module SSLScan
   class Report
+    Log = ::Log.for(self)
+
     # NOTE: Upper-cased partial matches
     CIPHER_LEVELS = {
       "EXP"           => :weak,
@@ -71,6 +73,8 @@ module SSLScan
       add_issues(test.certificates)
       add_issues(test.groups)
       add_issues(test.connection_signature_algorithms)
+
+      Log.info { "Found #{issues.size} issues" }
     end
 
     protected def entity_strength_to_issue_severity(strength : Entity::Strength) : Issue::Severity
