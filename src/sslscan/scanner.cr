@@ -2,6 +2,7 @@ module SSLScan
   module Scanner
     include Parser
 
+    # ameba:disable Metrics/CyclomaticComplexity
     def scan(host : String, port : Int32? = nil, sni_name : String? = nil, ip_version : Symbol? = nil, client_ciphers : Bool = false, times : Bool = false, sleep : Time::Span? = nil, timeout : Time::Span? = nil) : Report
       host += ":#{port}" if port
 
