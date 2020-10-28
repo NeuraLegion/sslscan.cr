@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document title="SSLScan Results" version="2.0.4-static" web="http://github.com/rbsec/sslscan">
+  <error><![CDATA[Could not open a connection to host 127.0.0.1 (127.0.0.1) on port 443.]]></error>
+</document>
