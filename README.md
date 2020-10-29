@@ -1,4 +1,4 @@
-# sslscan [![Build Status](https://travis-ci.com/Sija/sslscan.cr.svg?branch=master)](https://travis-ci.com/Sija/sslscan.cr) [![Releases](https://img.shields.io/github/release/Sija/sslscan.cr.svg)](https://github.com/Sija/sslscan.cr/releases) [![License](https://img.shields.io/github/license/Sija/sslscan.cr.svg)](https://github.com/Sija/sslscan.cr/blob/master/LICENSE)
+# sslscan.cr [![Build Status](https://travis-ci.com/NeuraLegion/sslscan.cr.svg?branch=master)](https://travis-ci.com/NeuraLegion/sslscan.cr) [![Releases](https://img.shields.io/github/release/NeuraLegion/sslscan.cr.svg)](https://github.com/NeuraLegion/sslscan.cr/releases) [![License](https://img.shields.io/github/license/NeuraLegion/sslscan.cr.svg)](https://github.com/NeuraLegion/sslscan.cr/blob/master/LICENSE)
 
 Crystal shard wrapping [sslscan](https://github.com/rbsec/sslscan) (v2) utility.
 
@@ -9,7 +9,7 @@ Crystal shard wrapping [sslscan](https://github.com/rbsec/sslscan) (v2) utility.
    ```yaml
    dependencies:
      sslscan:
-       github: Sija/sslscan.cr
+       github: NeuraLegion/sslscan.cr
    ```
 
 2. Run `shards install`
@@ -35,7 +35,7 @@ report.test # => #<SSLScan::Test ...>
 
 ## Contributing
 
-1. Fork it (<https://github.com/Sija/sslscan.cr/fork>)
+1. Fork it (<https://github.com/NeuraLegion/sslscan.cr/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
