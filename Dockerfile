@@ -16,8 +16,8 @@ RUN apt-get install -y --no-install-recommends apt-utils ca-certificates curl \
 #COPY multiparse-cerebrum.private /root/.ssh/id_rsa
 #RUN chmod 600 /root/.ssh/id_rsa
 #RUN eval "$(ssh-agent)" && \
-    ssh-add /root/.ssh/id_rsa && \
-    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts
+#    ssh-add /root/.ssh/id_rsa && \
+#    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts
 
 #SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -L https://keybase.io/crystal/pgp_keys.asc | apt-key add -
