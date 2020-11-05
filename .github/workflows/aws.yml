@@ -1,0 +1,39 @@
+
+on:
+  push:
+    branches:
+     # - development
+      - testpipeline
+  pull_request:
+    branches:
+      - testpipeline
+
+name: Sslscan Workflow
+
+jobs:
+  check-format:
+    name: Check format
+    runs-on: ubuntu-latest
+    container: crystallang/crystal
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Check sources format
+        run: crystal tool format --check
+  
+  ameba:
+    name: Ameba
+    runs-on: ubuntu-latest
+    container:
+      image: neuralegion/devops
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Build binary
+        run: docker build -t builder --target builder .  
+      - name: Run Ameba linter
+        run: >
+          docker run --entrypoint bash builder -c './bin/ameba
+          --except Metrics/CyclomaticComplexity'
+  
