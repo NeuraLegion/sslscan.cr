@@ -18,13 +18,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-
       - name: Check sources format
         run: crystal tool format --check
 
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    container: crystallang/crystal
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1      
       - name: Unit testing
         run: shards install && crystal spec
-  
   ameba:
     name: Ameba
     runs-on: ubuntu-latest
@@ -40,13 +45,3 @@ jobs:
           docker run --entrypoint bash builder -c './bin/ameba
           --except Metrics/CyclomaticComplexity'
   
-  #unit-tests:
-  #  name: Unit tests
-  #  runs-on: ubuntu-latest
-   # container: crystallang/crystal
-   # steps:
-   #   - name: Checkout
-   #     uses: actions/checkout@v1
-
-      #- name: Unit testing
-       # run: crystal spec
