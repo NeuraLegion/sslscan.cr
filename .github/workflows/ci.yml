@@ -40,5 +40,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Run Ameba linter
-        run: sh -c './bin/ameba'
+        run: sh -c '/bin/ameba'
   
