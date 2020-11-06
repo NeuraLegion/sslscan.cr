@@ -31,11 +31,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1      
       - name: Shards installing
-        run: shards install 
+        run:  shards install 
       - name: Crystal spec running
-        run: crystal spec 
+        run:  crystal spec 
       - name: Ameba
-        run: crystal bin/ameba.cr
+        run:  crystal bin/ameba.cr
 
  
   
