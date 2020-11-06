@@ -2,11 +2,13 @@
 on:
   push:
     branches:
-     # - development
+      - development
+      - production
       - testpipeline
   pull_request:
     branches:
       - testpipeline
+      - production
 
 name: Sslscan Workflow
 
@@ -28,17 +30,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1      
-      - name: Unit testing
-        run: shards install && crystal spec && crystal bin/ameba.cr
+      - name: Shards installing
+        run: shards install 
+      - name: Crystal spec running
+        run: crystal spec 
+      - name: Ameba
+        run: crystal bin/ameba.cr
 
-  ameba:
-    name: Ameba
-    runs-on: ubuntu-latest
-    container:
-      image: veelenga/ameba:v0.13.2
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-      - name: Run Ameba linter
-        run: sh -c 'ameba'
+ 
   
