@@ -1,4 +1,4 @@
-# sslscan.cr ![Build Status](https://github.com/NeuraLegion/sslscan.cr/workflows/CI/badge.svg) [![Releases](https://img.shields.io/github/release/NeuraLegion/sslscan.cr.svg)](https://github.com/NeuraLegion/sslscan.cr/releases) [![License](https://img.shields.io/github/license/NeuraLegion/sslscan.cr.svg)](https://github.com/NeuraLegion/sslscan.cr/blob/master/LICENSE)
+# sslscan.cr [![CI](https://github.com/NeuraLegion/sslscan.cr/actions/workflows/ci.yml/badge.svg)](https://github.com/NeuraLegion/sslscan.cr/actions/workflows/ci.yml) [![Releases](https://img.shields.io/github/release/NeuraLegion/sslscan.cr.svg)](https://github.com/NeuraLegion/sslscan.cr/releases) [![License](https://img.shields.io/github/license/NeuraLegion/sslscan.cr.svg)](https://github.com/NeuraLegion/sslscan.cr/blob/master/LICENSE)
 
 Crystal shard wrapping [sslscan](https://github.com/rbsec/sslscan) (v2) utility.
 
