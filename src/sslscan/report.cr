@@ -18,6 +18,7 @@ module SSLScan
       "SSLv2"   => :weak,
       "SSLv3"   => :weak,
       "TLSv1.0" => :medium,
+      "TLSv1.1" => :medium,
       "TLSv1.3" => :strong,
     } of String => Entity::Strength
 
