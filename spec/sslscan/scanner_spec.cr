@@ -44,7 +44,7 @@ Spectator.describe SSLScan::Scanner do
     end
 
     it "returns Report object for regular output" do
-      expect(TestScanner.scan("nexploit.app")).to be_a(SSLScan::Report)
+      expect { TestScanner.scan("nexploit.app") }.to be_a(SSLScan::Report)
     end
   end
 end
