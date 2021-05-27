@@ -8,9 +8,8 @@ development_dependencies:
   # there is some issue in Spectator v0.9.36+. I wasn't able to identify the root,
   # but for some strange reason it crashes during the call of Log.info or Log.error
   # in Parser::parse? and Report::initialize. Replacing this calls to Log.debug
-  # fixing the issue, but it is incorrect. Replacing "it" to "describe" in spec
-  # also fixes the issue, but because of 'let macro' it requires to rework the spec.
-  # So for the current moment it is better to lock the version of Spectator.
+  # fixing the issue, but it is incorrect. So for the current moment it is better
+  # to lock the version of Spectator.
   spectator:
     gitlab: arctic-fox/spectator
     version: 0.9.35
