@@ -25,7 +25,7 @@ module TestScanner
           when {true, false} then "-with-ciphers"
           when {false, true} then "-with-times"
           end
-        "nexploit.app#{flags}"
+        "app.neuralegion.com#{flags}"
       end
 
     return fixture if fixture.is_a?(XML::Node)
@@ -44,7 +44,7 @@ Spectator.describe SSLScan::Scanner do
     end
 
     it "returns Report object for regular output" do
-      expect { TestScanner.scan("nexploit.app") }.to be_a(SSLScan::Report)
+      expect { TestScanner.scan("app.neuralegion.com") }.to be_a(SSLScan::Report)
     end
   end
 end
