@@ -14,7 +14,7 @@ module TestParser
 end
 
 Spectator.describe SSLScan::Parser do
-  let(fixture) { xml_fixture("nexploit.app.xml") }
+  let(fixture) { xml_fixture("app.neuralegion.com.xml") }
   let(error_fixture) { xml_fixture("error.xml") }
   let(dummy_fixture) do
     XML.parse <<-XML
